@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Synthèse Vocale</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    select, textarea, button {
+      display: block;
+      margin-top: 15px;
+      width: 100%;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Synthèse vocale - Test mobile</h2>
+
+  <label for="voiceSelect">Choisis une langue/voix :</label>
+  <select id="voiceSelect"></select>
+
+  <label for="textToSpeak">Texte à lire :</label>
+  <textarea id="textToSpeak" rows="4">Bonjour ! Ceci est un test de synthèse vocale.</textarea>
+
+  <button onclick="speakText()">🔊 Parler</button>
+
+  <script>
+    const voiceSelect = document.getElementById('voiceSelect');
+    let voices = [];
+
+    function populateVoices() {
+      voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})${voice.default ? ' [par défaut]' : ''}`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    speechSynthesis.onvoiceschanged = populateVoices;
+    populateVoices();
+
+    function speakText() {
+      const text = document.getElementById('textToSpeak').value;
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedVoice = voices[voiceSelect.value];
+      utterance.voice = selectedVoice;
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>
